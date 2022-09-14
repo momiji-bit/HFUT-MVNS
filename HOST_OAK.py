@@ -5,11 +5,12 @@ import cv2
 import numpy
 # import threading
 import multiprocessing
+import numpy as np
 
 def ReceiveVideo():
     print('This is HOST!')
     # IP地址'0.0.0.0'为等待客户端连接
-    address = ('192.168.0.17', 8080)
+    address = ('172.16.36.120', 8888)
     # 建立socket对象，参数意义见https://blog.csdn.net/rebelqsp/article/details/22109925
     # socket.AF_INET：服务器之间网络通信
     # socket.SOCK_STREAM：流式socket , for TCP
@@ -60,6 +61,13 @@ def deal_data(conn, addr):
         data_D = numpy.frombuffer(stringData_D, numpy.uint8)  # 将获取到的字符流数据转换成1维数组
         decimg_RGB = cv2.imdecode(data_RGB, cv2.IMREAD_COLOR)  # 将数组解码成图像
         decimg_D = cv2.imdecode(data_D, cv2.IMREAD_COLOR)  # 将数组解码成图像
+
+        depth = cv2.cvtColor(decimg_D, cv2.COLOR_BGR2GRAY)
+        depth = cv2.normalize(depth, None, 255, 0, cv2.NORM_MINMAX, cv2.CV_8UC1)
+        depth = cv2.equalizeHist(depth)
+        decimg_D = cv2.applyColorMap(255 - depth, cv2.COLORMAP_HOT)
+
+        conn.send(str.encode('GUJIHAO'.ljust(7)))
 
         # 将帧率信息回传，主要目的是测试可以双向通信
         end = time.time()

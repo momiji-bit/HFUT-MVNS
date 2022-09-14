@@ -7,7 +7,7 @@ from utils.general import non_max_suppression, scale_coords, xyxy2xywh
 from utils.plots import Annotator, colors
 from utils.augmentations import letterbox
 from parameter import imgsz, stride,half, \
-    model, line_thickness, names
+    model, line_thickness, names, device
 from deep_sort.utils.parser import get_config
 from deep_sort.deep_sort import DeepSort
 
@@ -22,7 +22,7 @@ deepsort = DeepSort(model_type='osnet_x0_25',
                     max_age=cfg.DEEPSORT.MAX_AGE,
                     n_init=cfg.DEEPSORT.N_INIT,
                     nn_budget=cfg.DEEPSORT.NN_BUDGET,
-                    use_cuda=False)
+                    use_cuda=True)
 class Colors:
     # Ultralytics color palette https://ultralytics.com/
     def __init__(self):
@@ -49,7 +49,7 @@ def track(RGB):
     # Convert
     img_yolo = img_yolo[..., ::-1].transpose((0, 3, 1, 2))  # BGR to RGB, BHWC to BCHW
     img_yolo = np.ascontiguousarray(img_yolo)  # 将内存不连续存储的数组转换为内存连续存储的数组，使得运行速度更快
-    img_yolo = torch.from_numpy(img_yolo).to('cpu')  # 从numpy.ndarray创建一个张量
+    img_yolo = torch.from_numpy(img_yolo).to(device)  # 从numpy.ndarray创建一个张量
     img_yolo = img_yolo.half() if half else img_yolo.float()  # uint8 to fp16/32
     img_yolo = img_yolo / 255.0  # 0 - 255 to 0.0 - 1.0
     pred = model(img_yolo)[0]  # 预测  640 416
@@ -64,12 +64,13 @@ def track(RGB):
         outputs = deepsort.update(xywhs.cpu(), confs.cpu(), clss.cpu(), RGB)
         if len(outputs) > 0:
             for j, (output, conf) in enumerate(zip(outputs, confs)):
-                xyxy = output[0:4].tolist()  # bbox 坐标
-                id = output[4]  # 追踪编号
-                c = int(output[5])  # 类别
-                name = names[c]
-                t = [c, id, name, conf, xyxy]
-                out.append(t)
+                if int(output[5]) in [0,1,2,3,5,7]:
+                    xyxy = output[0:4].tolist()  # bbox 坐标
+                    id = output[4]  # 追踪编号
+                    c = int(output[5])  # 类别
+                    name = names[c]
+                    t = [c, id, name, conf, xyxy]
+                    out.append(t)
     else:
         deepsort.increment_ages()
     return out

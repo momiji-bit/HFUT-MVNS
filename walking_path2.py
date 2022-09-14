@@ -82,11 +82,18 @@ def point_to_ConfigData(topLeft_px, bottomRight_px, imgSize_hw=[640, 360], lower
     return config
 
 def getX(z, x):
-    fov = 68.7938
+    fov = 68.7938003540039
     alpha = fov / 2
     x_c = x - 320
     w = math.tan(math.radians(alpha)) * z
-    return (w * x_c) / 640
+    return (w * x_c) / 320
+
+def getObjectY(z, y):
+    vfov = 42.12409823672219
+    alpha = vfov / 2
+    y_c = y - 180
+    w = math.tan(math.radians(alpha)) * z
+    return -(w * y_c) / 180
 
 def getObjectDepth(depth, xyxy):  # 640 400
     slice = depth[xyxy[1]:xyxy[3], xyxy[0]:xyxy[2]]
@@ -301,7 +308,7 @@ with dai.Device(pipeline) as device:
 
                         Z = getObjectDepth(depth, i[4])
                         X = getX(Z, (i[4][0]+i[4][2])/2)
-                        Y = 0
+                        Y = getObjectY(Z, (i[4][1] + i[4][3]) / 2)  # 上下 mm
                         xmin = i[4][0]
                         ymin = i[4][1]
                         cv2.rectangle(depthDemo, tuple(i[4][:2]), tuple(i[4][2:]), col, 1)
@@ -313,7 +320,7 @@ with dai.Device(pipeline) as device:
                                     (xmin + 10, ymin + 50), cv2.FONT_HERSHEY_SIMPLEX, 0.3, (255, 0, 255))
                         #
                         path.updata(id=i[1], c=i[0], name=i[2], xyz=(X, Y, Z), T=time.time())
-                        path.small()
+                        # path.small()
                         path.predict(i[1])
 
                     points = path.get_points()

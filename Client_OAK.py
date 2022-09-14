@@ -24,6 +24,17 @@ def to_COLORMAP(depth):
     return cv2.applyColorMap(255 - depth, cv2.COLORMAP_HOT)
 
 
+def recvall(sock, count):
+    buf = b''  # buf是一个byte类型
+    while count:
+        # 接受TCP套接字的数据。数据以字符串形式返回，count指定要接收的最大数据量.
+        newbuf = sock.recv(count)
+        if not newbuf: return None
+        buf += newbuf
+        count -= len(newbuf)
+    return buf
+
+
 if __name__ == '__main__':
     lrcheck  = True   # Better handling for occlusions
     extended = False  # Closer-in minimum depth, disparity range is doubled
@@ -31,11 +42,11 @@ if __name__ == '__main__':
     # Options: MEDIAN_OFF, KERNEL_3x3, KERNEL_5x5, KERNEL_7x7
     median   = dai.StereoDepthProperties.MedianFilter.KERNEL_3x3
 
-    print("StereoDepth config options:")
-    print("    Left-Right check:  ", lrcheck)
-    print("    Extended disparity:", extended)
-    print("    Subpixel:          ", subpixel)
-    print("    Median filtering:  ", median)
+    # print("StereoDepth config options:")
+    # print("    Left-Right check:  ", lrcheck)
+    # print("    Extended disparity:", extended)
+    # print("    Subpixel:          ", subpixel)
+    # print("    Median filtering:  ", median)
 
     pipeline = dai.Pipeline()
 
@@ -66,7 +77,7 @@ if __name__ == '__main__':
     config.postProcessing.spatialFilter.holeFillingRadius = 2
     config.postProcessing.spatialFilter.numIterations = 1
     config.postProcessing.thresholdFilter.minRange = 0  # 0.2m
-    config.postProcessing.thresholdFilter.maxRange = 10000  # 20m
+    config.postProcessing.thresholdFilter.maxRange = 20000  # 20m
     config.postProcessing.decimationFilter.decimationFactor = 1
     stereo.initialConfig.set(config)
 
@@ -133,7 +144,8 @@ if __name__ == '__main__':
 
         sync = HostSync()
         # TCP连接
-        address = ('192.168.0.107', 8888)
+        address = ('172.16.36.120', 8888)
+        # 3.tcp.cpolar.top 11670
         try:
             # 建立socket对象，参数意义见https://blog.csdn.net/rebelqsp/article/details/22109925
             # socket.AF_INET：服务器之间网络通信
@@ -144,7 +156,7 @@ if __name__ == '__main__':
         except socket.error as msg:
             print(msg)
             sys.exit(1)
-        encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 100]  # 压缩会提高帧率，但会更占用CPU以及更长的延时
+        encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 95]  # 压缩会提高帧率，但会更占用CPU以及更长的延时
 
         while True:
             t0 = time.time()
@@ -153,15 +165,16 @@ if __name__ == '__main__':
                 if new_msg is not None:
                     msgs = sync.add_msg(q.getName(), new_msg)
                     if msgs:
-                        depth = msgs["depth"].getFrame()
                         color = msgs["colorize"].getCvFrame()
-                        depth = to_COLORMAP(depth)
-
-
-                        result_RGB, imgencode_RGB = cv2.imencode('.jpg', color, [int(cv2.IMWRITE_JPEG_QUALITY), 90])
+                        result_RGB, imgencode_RGB = cv2.imencode('.jpg', color, [int(cv2.IMWRITE_JPEG_QUALITY), 95])
                         data_RGB = numpy.array(imgencode_RGB)
                         stringData_RGB = data_RGB.tobytes()
-                        result_D, imgencode_D = cv2.imencode('.jpg', depth, [int(cv2.IMWRITE_JPEG_QUALITY), 100])
+
+                        depth = msgs["depth"].getFrame()
+                        # depth = to_COLORMAP(depth)
+                        depth_RGB = (cv2.cvtColor(depth, cv2.COLOR_GRAY2BGR)/20000)*255
+                        depth_RGB = depth_RGB.astype(np.uint8)
+                        result_D, imgencode_D = cv2.imencode('.jpg', depth_RGB, [int(cv2.IMWRITE_JPEG_QUALITY), 100])
                         data_D = numpy.array(imgencode_D)
                         stringData_D = data_D.tobytes()
 
@@ -170,16 +183,12 @@ if __name__ == '__main__':
                         sock.send(stringData_RGB)
                         sock.send(stringData_D)
 
-                        # out = np.hstack((color, depth))
-                        # result, imgencode = cv2.imencode('.jpg', out, encode_param)
-                        # data = numpy.array(imgencode)
-                        # stringData = data.tobytes()
-                        # sock.send(str.encode(str(len(stringData)).ljust(16)))
-                        # sock.send(stringData)
+                        echo = recvall(sock, 7).decode('UTF-8')
+                        if echo == 'GUJIHAO':
+                            print(f'\rtime={(time.time()-t0)*1000:.1f}ms', end='')
 
-
-
-                        print(int((time.time()-t0)*1000), 'ms')
+                        # print(int((time.time()-t0)*1000), 'ms')
+                        # cv2.imshow('a', depth_RGB)
 
                         if cv2.waitKey(1) == ord('q'):
                             break

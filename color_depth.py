@@ -97,6 +97,9 @@ class HostSync:
             return synced
         return False
 
+writer_color = cv2.VideoWriter('./color.mp4', cv2.VideoWriter_fourcc(*'MP4V'), 60, (640, 360))
+writer_depth = cv2.VideoWriter('./depth.mp4', cv2.VideoWriter_fourcc(*'MP4V'), 60, (640, 360))
+
 with dai.Device(pipeline) as device:
 
     device.setIrLaserDotProjectorBrightness(1200)
@@ -130,6 +133,8 @@ with dai.Device(pipeline) as device:
                     # out = np.uint8(color * 2 / 3 + depthDemo / 3)
                     cv2.imshow('color', color)
                     cv2.imshow('depthDemo', depthDemo)
+                    writer_color.write(color)
+                    writer_depth.write(depthDemo)
                     #
                     # cv2.putText(out, "fps: {:}".format(int(1 / (time.time() - t0))), (2, out.shape[0] - 4),
                     #             cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 1)
