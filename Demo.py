@@ -6,7 +6,6 @@ import matplotlib
 matplotlib.use('TKAgg')
 
 if __name__ == '__main__':
-
     colors = Colors()
     oakCam = OakCam()
     msg = oakCam.get_msg()
@@ -75,16 +74,14 @@ if __name__ == '__main__':
         cv2.line(background, (R, R), (int(rd[0] / 10 + 0.5) + R, -int(rd[1] / 10 + 0.5) + R), (0, 0, 150),
                  1)
 
-        depthDemo = cv2.normalize(D, None, 255, 0, cv2.NORM_INF, cv2.CV_8UC1)
-        depthDemo = cv2.equalizeHist(depthDemo)
-        depthDemo = cv2.applyColorMap(255 - depthDemo, cv2.COLORMAP_HOT)
+        depthDemo = cv2.applyColorMap(cv2.equalizeHist(cv2.normalize(D, None, 255, 0, cv2.NORM_INF, cv2.CV_8UC1)), cv2.COLORMAP_VIRIDIS)
 
         Demo = np.vstack((depthDemo, RGB))
         Demo = cv2.resize(Demo, (int(R*2*640/720+0.5), int(R*2+0.5)))
         Demo = np.hstack((background, Demo))
         cv2.putText(Demo, "FPS: {:.1f}".format(1 / (time.time() - t0)), (2, Demo.shape[0] - 4), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 1)
         cv2.imshow('Demo', Demo)
-        print('done')
+        # print('done')
 
         plt.show()
 

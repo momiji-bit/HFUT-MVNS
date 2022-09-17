@@ -153,7 +153,7 @@ def track(RGB):
         outputs = deepsort.update(xywhs.cpu(), confs.cpu(), clss.cpu(), RGB)
         if len(outputs) > 0:
             for j, (output, conf) in enumerate(zip(outputs, confs)):
-                if names[output[5]] in ['bottle']:
+                if names[output[5]] in ['person']:
                     xyxy = output[0:4].tolist()  # bbox 坐标
                     id = output[4]  # 追踪编号
                     c = int(output[5])  # 类别
