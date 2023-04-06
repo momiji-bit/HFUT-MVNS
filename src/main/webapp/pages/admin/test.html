@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<img>
+</body>
+
+<script>
+    //JQuery 代码入口
+    $(document).ready(function(){
+
+        //setInterval("getData()",3000);
+
+        if ("WebSocket" in window) {
+            //连接server--TagCurValue
+            var ws = new WebSocket("ws://127.0.0.1:8080");
+            //var ws = new WebSocket("ws://127.0.0.1:8008/tagCurValue");
+            ws.onmessage = function (evt) {
+                // 接收数据
+                receivedMsg = evt.data;
+                $("#divTag").html(receivedMsg);
+
+            };
+        }
+
+
+    });
+</script>
+</html>

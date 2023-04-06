@@ -1,0 +1,42 @@
+{
+  "homeInfo": {
+    "title": "首页",
+    "href": "status.do"
+  },
+  "logoInfo": {
+    "title": "HFUT-MVNS",
+    "image": "images/logo.png",
+    "href": ""
+  },
+  "menuInfo": [
+    {
+      "title": "开发者调试功能",
+      "icon": "fa fa-address-book",
+      "href": "",
+      "target": "_self",
+      "child": [
+        {
+          "title": "设备管理",
+          "href": "",
+          "icon": "fa fa-home",
+          "target": "_self",
+          "child": [
+            {
+              "title": "设备状态管理",
+              "href": "status.do",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            },
+            {
+              "title": "设备实时数据",
+              "href": "pages/admin/deviceInfo.jsp",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            }
+          ]
+        }
+      ]
+    }
+
+  ]
+}

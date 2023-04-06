@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.glass.mapper.UserMapper">
+    <insert id="insert">
+        insert into user_info (username,password,deviceid)
+        values(#{username},#{password},#{deviceId})
+    </insert>
+    <select id="selectToLogin" resultType="com.glass.pojo.User">
+        select * from user_info where username=#{username} and password = #{password};
+    </select>
+
+</mapper>
