@@ -9,11 +9,9 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="271057d4-a961-4b2c-9894-b1a235fdc6ee" name="变更" comment="web项目">
-      <change afterPath="$PROJECT_DIR$/img.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/img_1.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/readme.md" afterDir="false" />
+    <list default="true" id="271057d4-a961-4b2c-9894-b1a235fdc6ee" name="变更" comment="readme">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/readme.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -333,7 +331,8 @@
       <workItem from="1675848835514" duration="1512000" />
       <workItem from="1676453056523" duration="605000" />
       <workItem from="1678804892068" duration="13000" />
-      <workItem from="1680772160485" duration="2550000" />
+      <workItem from="1680772160485" duration="2715000" />
+      <workItem from="1680880105019" duration="701000" />
     </task>
     <task id="LOCAL-00001" summary="web项目">
       <created>1680773414072</created>
@@ -342,7 +341,28 @@
       <option name="project" value="LOCAL" />
       <updated>1680773414072</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="readme">
+      <created>1680774786172</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1680774786172</updated>
+    </task>
+    <task id="LOCAL-00003" summary="json">
+      <created>1680774872026</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1680774872026</updated>
+    </task>
+    <task id="LOCAL-00004" summary="readme">
+      <created>1680774926389</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1680774926389</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -373,7 +393,9 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="web项目" />
-    <option name="LAST_COMMIT_MESSAGE" value="web项目" />
+    <MESSAGE value="json" />
+    <MESSAGE value="readme" />
+    <option name="LAST_COMMIT_MESSAGE" value="readme" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
